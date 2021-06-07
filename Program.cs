@@ -16,11 +16,19 @@ namespace BuilderPattern
 
 
             var inventoryBuilder = new DailyReportBuilder(items);
-            var director = new InventoryBuilderDirector(inventoryBuilder);
+            //var director = new InventoryBuilderDirector(inventoryBuilder);
 
-            director.BuildCompleteReport();
-            var directorReport = inventoryBuilder.GetDailyReport();
-            Console.WriteLine(directorReport.Debug());
+            //director.BuildCompleteReport();
+            //var directorReport = inventoryBuilder.GetDailyReport();
+            //Console.WriteLine(directorReport.Debug());
+
+
+            var fluentReport = inventoryBuilder
+                .AddTite()
+                .AddDimensions()
+                .AddLogistics(DateTime.Now)
+                .GetDailyReport();
+            Console.WriteLine(fluentReport.Debug());
         }
     }
 }
