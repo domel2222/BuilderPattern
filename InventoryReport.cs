@@ -46,7 +46,7 @@ namespace BuilderPattern
     {
         void AddTite();
         void AddDimensions();
-        void AddLogistics();
+        void AddLogistics(DateTime dateTime);
         InventoryReport GetDailyReport();
     }
 
@@ -54,10 +54,12 @@ namespace BuilderPattern
     {
 
         private InventoryReport _report;
+        private readonly IEnumerable<FurnitureItem> _items;
 
-        public DailyReportBuilder()
+        public DailyReportBuilder(IEnumerable<FurnitureItem> items)
         {
             Reset();
+            this._items = items;
         }
 
         public void Reset()
@@ -66,22 +68,49 @@ namespace BuilderPattern
         }
         public void AddDimensions()
         {
-            throw new NotImplementedException();
+            _report.DimensionsSection = string.Join(Environment.NewLine, _items.Select(product =>
+                        $"Product: {product.Name} \n" +
+                        $"Price {product.Price} \n" +
+                        $"Height {product.Height} \n" +
+                        $"Width {product.Width} \n" +
+                        $"Weight {product.Weight} \n"));
         }
 
-        public void AddLogistics()
+        public void AddLogistics(DateTime dateTime)
         {
-            throw new NotImplementedException();
+            _report.LogisticsSection = "Report generated on {dateTime}";
         }
 
         public void AddTite()
         {
-            throw new NotImplementedException();
+            _report.TitleSection = "------ Daily Inventory Report ------\n\n";
         }
 
         public InventoryReport GetDailyReport()
         {
-            throw new NotImplementedException();
+            InventoryReport finishedReport = _report;
+            Reset();
+
+            return finishedReport;
+        }
+
+
+
+    }
+    public class InventoryBuilderDirector
+    {
+        private IFurnitureInventoryBuider _builder;
+
+        public InventoryBuilderDirector(IFurnitureInventoryBuider concreteBuilder)
+        {
+            _builder = concreteBuilder;
+        }
+
+        public void BuildCompleteReport()
+        {
+            _builder.AddTite();
+            _builder.AddDimensions();
+            _builder.AddLogistics(DateTime.Now);
         }
     }
 }
